@@ -19,7 +19,7 @@
 # include <stdio.h>
 # include "./libft/libft.h"
 # include "./libft/get_next_line.h"
-
+# define ESP 10
 
 typedef struct	mlx_struct
 {
@@ -34,6 +34,7 @@ typedef struct  gda_struct
 	int bpp;
 	int size_line;
 	int end;
+	int esp;
 }				g_struct;
 
 typedef struct pars_struct
@@ -61,13 +62,14 @@ typedef struct seg_struct
 }				se_struct;
 
 int		esc_key(int key, void *mlx);
-void    put_tab_to_image(g_struct g, int **tab, int line_size, int esp);
+void    put_tab_to_image(g_struct g, int **tab, int line_size);
 int		**create_tab(int nbl, int line_size);
 int		**fill_tab(p_struct p, char *file, int **tab);
 int		check_line_size(char **tab);
 int		**check_entry(char *file, p_struct *p);
-void	draw_segh(g_struct g, se_struct s, c_struct c);
-void	draw_seg(int **tab, int esp, int line_size, g_struct g);
-void	draw_segv(g_struct g, se_struct s, c_struct c);
+void	draw_seg(int **tab, int line_size, g_struct g);
+void test_segv(se_struct s, c_struct c, g_struct g);
+void test_segh(se_struct s, c_struct c, g_struct g);
+void global_seg(se_struct s, c_struct c, g_struct g);
 
 #endif
