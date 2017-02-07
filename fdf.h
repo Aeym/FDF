@@ -20,21 +20,30 @@
 # include "./libft/libft.h"
 # include "./libft/get_next_line.h"
 # define ESP 10
-
-typedef struct	mlx_struct
-{
-	void *mlx;
-	void *win;
-	void *img;
-}				m_struct;
+# define KeyPress 	2
+# define KeyPressMask	(1L<<0)
+// typedef struct	mlx_struct
+// {
+// 	void *mlx;
+// 	void *win;
+// 	void *img;
+// 	int posx;
+// 	int posy;
+// }				m_struct;
 
 typedef struct  gda_struct
 {
+	char *av1;
 	char *gda;
 	int bpp;
 	int size_line;
 	int end;
 	int esp;
+	void *mlx;
+	void *win;
+	void *img;
+	int posx;
+	int posy;
 }				g_struct;
 
 typedef struct pars_struct
@@ -59,9 +68,10 @@ typedef struct seg_struct
 	int y1;
 	int x2;
 	int y2;
+	int z2;
 }				se_struct;
 
-int		esc_key(int key, void *mlx);
+int		esc_key(int key, g_struct *g);
 void    put_tab_to_image(g_struct g, int **tab, int line_size);
 int		**create_tab(int nbl, int line_size);
 int		**fill_tab(p_struct p, char *file, int **tab);

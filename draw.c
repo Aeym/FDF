@@ -29,20 +29,37 @@
 // 		*(unsigned*)(g.gda + (c.x) * g.esp * g.size_line + (c.y)* g.esp * g.bpp / 8) = color;
 // }
 
+int ft_abs(int x)
+{
+	return ((x < 0) ? -x : x);
+}
+
+
 void trace_line(g_struct g, c_struct c)
 {
 	int color;
 
-	if (c.z < 3)
-		color = 0x00FF6600;
+	// if (!(g.posx))
+	// {
+	// 	g.posx = 1350 - ;
+	// 	g.posy = 0;
+	// }
+	if (c.z <= -10)
+		color = 0x00333333;
+	if (c.z > -10 && c.z < -5)
+		color = 0x005C5C5C;
+	if (c.z < 0 && c.z >= -5)
+		color = 0x00979797;
+	if (c.z < 3 && c.z >= 0)
+		color = 0x00ACACAC;
 	if (c.z < 5 && c.z >= 3)
-		color = 0x00FFFFFF;
+		color = 0x00669999;
 	if (c.z >= 5 && c.z < 10)
-		color = 0x00FF0000;
+		color = 0x00D5D5D5;
 	if (c.z >= 10)
-		color = 0x00FFFF00;
-	if ((c.x + 10) < 1350 && (c.y + 10) < 2400 && (c.x + 10) > 0 && (c.y + 10) > 0)
-		*(unsigned*)(g.gda + (c.x + 10) * g.size_line + (c.y + 10) * g.bpp / 8) = color;
+		color = 0x00FFFFFF;
+	if ((c.x + g.posx) < 1350 && (c.y + g.posy) < 2400 && (c.x + g.posx) > 0 && (c.y + g.posy) > 0)
+		*(unsigned*)(g.gda + (c.x + g.posx) * g.size_line + (c.y + g.posy) * g.bpp / 8) = color;
 }
 
 c_struct	proj_para(c_struct c);
@@ -82,22 +99,21 @@ c_struct	proj_iso(c_struct c);
 
 c_struct 	proj_para(c_struct c)
 {
-	float p;
-
 	if (c.z != 0)
 	{
 		c.x += 0.5 *c.z;
-		p = 0.25 * c.z;
-		c.y += p;
+		c.y += 0.25 * c.z;
 	}
 	return (c);
 }
 
 c_struct	proj_iso(c_struct c)
 {
-	float p;
-	c.x = 0.8 * c.x - 0.6 * c.y;
-	c.y = c.z + 0.4 * c.x + 0.3 * c.y;
+	if (c.z != 0)
+	{
+		c.x = c.x + (c.z * 1.0);
+		c.y = c.y + 0.8 * (c.z * 1.0);
+	}
 	return (c);
 }
 
@@ -116,16 +132,19 @@ void	draw_seg(int **tab, int line_size, g_struct g)
 		c.y = 0;
 		while (c.y < line_size)
 		{
+			c.z = tab[c.x][c.y];
+			c2 = proj_iso(c);
+			s.x1 = c2.x * g.esp;
+			s.y1 = c2.y * g.esp;
 			if ((c.y + 1) < line_size)
 			{
-				c.z = tab[c.x][c.y];
-				c2 = proj_para(c);
-				s.x1 = c2.x * g.esp;
-				s.y1 = c2.y * g.esp;
 				c3.x = c.x;
 				c3.y = c.y + 1;
 				c3.z = tab[c3.x][c3.y];
-				c4 = proj_para(c3);
+				// if (ft_abs(c3.z) > ft_abs(c.z))
+				// 	c.z = c3.z;
+				s.z2 = c3.z;
+				c4 = proj_iso(c3);
 				s.x2 = c4.x * g.esp;
 				s.y2 = c4.y * g.esp;
 				
@@ -133,14 +152,13 @@ void	draw_seg(int **tab, int line_size, g_struct g)
 			}
 			if (tab[c.x + 1] != NULL)
 			{
-				c.z = tab[c.x][c.y];
-				c2 = proj_para(c);
-				s.x1 = c2.x * g.esp;
-				s.y1 = c2.y * g.esp;
 				c3.x = c.x + 1;
 				c3.y = c.y;
 				c3.z = tab[c3.x][c3.y];
-				c4 = proj_para(c3);
+				// if (ft_abs(c3.z) > ft_abs(c.z))
+				// 	c.z = c3.z;
+				s.z2 = c3.z;
+				c4 = proj_iso(c3);
 				s.x2 = c4.x * g.esp;
 				s.y2 = c4.y * g.esp;
 				global_seg(s, c, g);
@@ -163,16 +181,10 @@ void swap_se(se_struct *s)
 	s->y2 = a;
 }
 
-int ft_abs(int x)
-{
-	return ((x < 0) ? -x : x);
-}
-
 void global_seg(se_struct s, c_struct c, g_struct g)
 {
 	if (ft_abs(s.x2 - s.x1) >= ft_abs(s.y2 - s.y1))
 	{
-		printf("cas 1\n");
 		if (s.x1 < s.x2)
 			test_segv(s, c, g);
 		else
@@ -183,7 +195,6 @@ void global_seg(se_struct s, c_struct c, g_struct g)
 	}
 	else
 	{
-		printf("cas 2\n");
 		if (s.y1 < s.y2)
 			test_segh(s, c, g);
 		else
@@ -215,9 +226,12 @@ void	test_segh(se_struct s, c_struct c, g_struct g)
 	int dx;
 	int dy;
 
+
 	c.y = s.y1;
 	dx = s.x2 - s.x1;
 	dy = s.y2 - s.y1;
+	// printf("s.z2 : %d\nc.z%d\n", s.z2, c.z);
+	// printf("dz = %d\n", dz);
 	while (c.y <= s.y2 && dy != 0)
 	{
 		c.x = s.x1 + dx * (c.y - s.y1) / dy;

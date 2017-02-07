@@ -12,9 +12,13 @@
 
 #include "fdf.h"
 
-int	esc_key(int key, void *mlx)
+int	esc_key(int key, g_struct *g)
 {
+	printf("key :%d\n", key);
 	if (key == 53)
+	{
 		exit (EXIT_SUCCESS);
-	return (0);
+		return (0);
+	}
+	return (1);
 }
