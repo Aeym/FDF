@@ -12,7 +12,7 @@
 
 NAME = fdf
 
-SRCS = main.c key_hook.c draw.c mlx.c
+SRCS = main.c draw.c mlx.c utility.c geom.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -29,7 +29,7 @@ all : $(NAME)
 $(NAME) : $(OBJ)
 	@make re -C ./libft/
 	@echo "\033[1m\033[32m[ ✔ ]Compilation succes :\033[0m libft"
-	@gcc -o $(NAME) $(SRCS) $(HEADER) $(FLAG_MLX) $(LIBFT)
+	@gcc $(FLAGS) -o $(NAME) $(SRCS) $(HEADER) $(FLAG_MLX) $(LIBFT)
 	@echo "\033[1m\033[32m[ ✔ ]Compilation succes :\033[0m $(NAME)"
 
 clean :

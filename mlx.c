@@ -20,29 +20,51 @@ int **create_tab(int nbl, int line_size)
 	return (tab);
 }
 
-int **fill_tab(p_struct p, char *file, int **tab)
+int **fill_tab(p_struct *p, char *file, int **tab)
 {
 	int i;
 	int j;
 
-	p.fd = open(file, O_RDONLY);
+	p->zmax = 0;
+	p->fd = open(file, O_RDONLY);
 	i = 0;
-	while (get_next_line(p.fd, &p.line) && i < p.nbl)
+	while (get_next_line(p->fd, &p->line) && i < p->nbl)
 	{
-		p.line_split = ft_strsplit(p.line, ' ');
+		p->line_split = ft_strsplit(p->line, ' ');
 		j = 0;
-		while (j < p.line_size)
+		while (j < p->line_size)
 		{
-			tab[i][j] = ft_atoi(p.line_split[j]);
-		//	ft_putnbr(tab[i][j]);	
+			tab[i][j] = ft_atoi(p->line_split[j]);
+			if (ft_abs(tab[i][j]) > p->zmax)
+				p->zmax = ft_abs(tab[i][j]);	
 			j++;
 		}
-		//ft_putchar('\n');
 		i++;
 	}
-	return (tab);
+	return (prop_tab(p, tab));
 }
 
+int **prop_tab(p_struct *p, int **tab)
+{
+	float c;
+	int i;
+	int j;
+
+	i = 0;
+	c = p->zmax / 100.0;
+
+		while (i < p->nbl)
+		{
+			j = 0;
+			while (j < p->line_size)
+			{
+					tab[i][j] /= c;
+				j++;
+			}
+			i++;
+		}
+	return (tab);
+}
 
 int check_line_size(char **tab)
 {
@@ -72,5 +94,5 @@ int **check_entry(char *file, p_struct *p)
 		p->nbl++;
 	}
 	close(p->fd);
-	return (fill_tab(*p, file, create_tab(p->nbl, p->line_size)));
+	return (fill_tab(p, file, create_tab(p->nbl, p->line_size)));
 }
