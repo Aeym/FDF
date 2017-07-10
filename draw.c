@@ -6,17 +6,17 @@
 /*   By: ealrick <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/27 16:41:58 by ealrick           #+#    #+#             */
-/*   Updated: 2017/01/28 16:35:04 by ealrick          ###   ########.fr       */
+/*   Updated: 2017/02/26 17:00:04 by ealrick          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	draw_seg1(int **tab, int line_size, g_struct g, c_struct c)
+void		draw_seg1(int **tab, int line_size, t_gda g, t_coo c)
 {
-	c_struct c2;
-	c_struct c3;
-	se_struct s;
+	t_coo	c2;
+	t_coo	c3;
+	t_seg	s;
 
 	c.x = -1;
 	while (tab[++c.x] != NULL)
@@ -32,7 +32,7 @@ void	draw_seg1(int **tab, int line_size, g_struct g, c_struct c)
 				c3.y = c.y + 1;
 				c3.z = tab[c3.x][c3.y];
 				if (ft_abs(c3.z) > ft_abs(c.z))
-				 	c.z = c3.z;
+					c.z = c3.z;
 				c3 = rot(proj_para(c3, g), g);
 				fill_se(&s, c2, c3);
 				global_seg(s, c, g);
@@ -41,11 +41,11 @@ void	draw_seg1(int **tab, int line_size, g_struct g, c_struct c)
 	}
 }
 
-void	draw_seg2(int **tab, int line_size, g_struct g, c_struct c)
+void		draw_seg2(int **tab, int line_size, t_gda g, t_coo c)
 {
-	c_struct c2;
-	c_struct c3;
-	se_struct s;
+	t_coo	c2;
+	t_coo	c3;
+	t_seg	s;
 
 	c.x = -1;
 	while (tab[++c.x] != NULL)
@@ -70,7 +70,7 @@ void	draw_seg2(int **tab, int line_size, g_struct g, c_struct c)
 	}
 }
 
-void global_seg(se_struct s, c_struct c, g_struct g)
+void		global_seg(t_seg s, t_coo c, t_gda g)
 {
 	if (ft_abs(s.x2 - s.x1) >= ft_abs(s.y2 - s.y1))
 	{
@@ -94,7 +94,7 @@ void global_seg(se_struct s, c_struct c, g_struct g)
 	}
 }
 
-void test_segv(se_struct s, c_struct c, g_struct g)
+void		test_segv(t_seg s, t_coo c, t_gda g)
 {
 	int dx;
 	int dy;
@@ -110,11 +110,10 @@ void test_segv(se_struct s, c_struct c, g_struct g)
 	}
 }
 
-void	test_segh(se_struct s, c_struct c, g_struct g)
+void		test_segh(t_seg s, t_coo c, t_gda g)
 {
 	int dx;
 	int dy;
-
 
 	c.y = s.y1;
 	dx = s.x2 - s.x1;

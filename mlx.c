@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mlx.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ealrick <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/02/26 17:06:42 by ealrick           #+#    #+#             */
+/*   Updated: 2017/02/26 17:08:54 by ealrick          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
-int **create_tab(int nbl, int line_size)
+int			**create_tab(int nbl, int line_size)
 {
-	int i;
-	int **tab;
-	int *tab2;
+	int		i;
+	int		**tab;
+	int		*tab2;
 
 	i = 0;
 	if (!(tab = (int **)malloc(sizeof(int *) * (nbl + 1))))
 		return (NULL);
-	if (!(tab2 = (int *)malloc((sizeof(int) * line_size * nbl ))))
-			return (NULL);
+	if (!(tab2 = (int *)malloc((sizeof(int) * line_size * nbl))))
+		return (NULL);
 	while (i < nbl)
 	{
 		tab[i] = &tab2[i * line_size];
@@ -20,10 +32,10 @@ int **create_tab(int nbl, int line_size)
 	return (tab);
 }
 
-int **fill_tab(p_struct *p, char *file, int **tab)
+int			**fill_tab(t_pars *p, char *file, int **tab)
 {
-	int i;
-	int j;
+	int		i;
+	int		j;
 
 	p->zmax = 0;
 	p->fd = open(file, O_RDONLY);
@@ -36,7 +48,7 @@ int **fill_tab(p_struct *p, char *file, int **tab)
 		{
 			tab[i][j] = ft_atoi(p->line_split[j]);
 			if (ft_abs(tab[i][j]) > p->zmax)
-				p->zmax = ft_abs(tab[i][j]);	
+				p->zmax = ft_abs(tab[i][j]);
 			j++;
 		}
 		i++;
@@ -44,31 +56,30 @@ int **fill_tab(p_struct *p, char *file, int **tab)
 	return (prop_tab(p, tab));
 }
 
-int **prop_tab(p_struct *p, int **tab)
+int			**prop_tab(t_pars *p, int **tab)
 {
-	float c;
-	int i;
-	int j;
+	float	c;
+	int		i;
+	int		j;
 
 	i = 0;
 	c = p->zmax / 100.0;
-
-		while (i < p->nbl)
+	while (i < p->nbl)
+	{
+		j = 0;
+		while (j < p->line_size)
 		{
-			j = 0;
-			while (j < p->line_size)
-			{
-					tab[i][j] /= c;
-				j++;
-			}
-			i++;
+			tab[i][j] /= c;
+			j++;
 		}
+		i++;
+	}
 	return (tab);
 }
 
-int check_line_size(char **tab)
+int			check_line_size(char **tab)
 {
-	int i;
+	int		i;
 
 	i = 0;
 	while (tab[i])
@@ -76,10 +87,10 @@ int check_line_size(char **tab)
 	return (i);
 }
 
-int **check_entry(char *file, p_struct *p)
+int			**check_entry(char *file, t_pars *p)
 {
-	int tmp;
-	
+	int		tmp;
+
 	p->fd = open(file, O_RDONLY);
 	tmp = 0;
 	p->nbl = 0;

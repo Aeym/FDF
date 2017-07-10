@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utility.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ealrick <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/02/26 17:00:33 by ealrick           #+#    #+#             */
+/*   Updated: 2017/02/26 17:03:42 by ealrick          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
-void swap_se(se_struct *s)
+void	swap_se(t_seg *s)
 {
 	int a;
-	
+
 	a = s->x1;
 	s->x1 = s->x2;
 	s->x2 = a;
@@ -12,13 +24,12 @@ void swap_se(se_struct *s)
 	s->y2 = a;
 }
 
-
-int ft_abs(int x)
+int		ft_abs(int x)
 {
 	return ((x < 0) ? -x : x);
 }
 
-void trace_line(g_struct g, c_struct c)
+void	trace_line(t_gda g, t_coo c)
 {
 	int color;
 
@@ -40,45 +51,16 @@ void trace_line(g_struct g, c_struct c)
 		color = 0x00A76E0F;
 	if (c.z >= 50)
 		color = 0x005E4315;
-	if ((c.x + g.posx) < 1350 && (c.y + g.posy) < 2400 && 
+	if ((c.x + g.posx) < WIND_Y && (c.y + g.posy) < WIND_X &&
 		(c.x + g.posx) > 0 && (c.y + g.posy) > 0)
 		*(unsigned*)(g.gda + (c.x + g.posx) * g.size_line +
-		 (c.y + g.posy) * g.bpp / 8) = color;
+		(c.y + g.posy) * g.bpp / 8) = color + g.c;
 }
 
-void 	fill_se(se_struct *s, c_struct c1, c_struct c2)
+void	fill_se(t_seg *s, t_coo c1, t_coo c2)
 {
 	s->x1 = c1.x;
 	s->y1 = c1.y;
 	s->x2 = c2.x;
 	s->y2 = c2.y;
-}
-
-int 	hook_key(int key, g_struct *g)
-{
-	if (key == 46)
-		g->deep *= 1.5;
-	if (key == 37)
-		g->deep /= 1.5;
-	if (key == 33)
-		g->a += 4 * 3.14 / 180;
-	if (key == 30)
-		g->a -= 4 * 3.14 / 180;
-	if (key == 69)
-		g->esp++;
-	if (key == 78 && g->esp > 0)
-		g->esp--;
-	if (key == 53)
-		exit (EXIT_SUCCESS);
-	if (key == 126)
-		g->posx -= 50;;
-	if (key == 125)
-		g->posx += 50;
-	if (key == 124)
-		g->posy += 50;
-	if (key == 123)
-		g->posy -= 50;
-	mlx_destroy_image(g->mlx, g->img);
-	init_prog(g);
-	return (0);
 }
